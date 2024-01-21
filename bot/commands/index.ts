@@ -1,7 +1,7 @@
 import { Composer } from 'grammy';
 import start, { startUserSuggestionInfo } from './start';
 
-export const commandsUserSuggestions = [startUserSuggestionInfo];
+export const commandsUserSuggestions: { command: string; description: string }[] = [startUserSuggestionInfo];
 
 const commandsList = {
   start,

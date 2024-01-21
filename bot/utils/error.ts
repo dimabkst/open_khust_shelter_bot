@@ -2,13 +2,8 @@ import { BotError, GrammyError, HttpError } from 'grammy';
 import logger from '../../core/utils/logger';
 import handleError from '../../core/utils/error';
 
-const logBotError = (err: BotError) => {
-  const ctx = err.ctx;
-
-  logger.error(`Error while handling update ${ctx.update.update_id}:`);
-
-  const e = err.error;
-
+// log internal bot errors from both user and non-user calls
+const logBotInternalError = (e: any) => {
   let logMessage: string;
 
   let shouldLogError = true;
@@ -34,6 +29,23 @@ const logBotError = (err: BotError) => {
   }
 };
 
+// handle internal bot errors from both user and non-user calls
+export const handleInternalBotError = (e: any) => {
+  logBotInternalError(e);
+};
+
+// log errors from bot.catch
+const logBotError = (err: BotError) => {
+  const ctx = err.ctx;
+
+  logger.error(`Error while handling update ${ctx.update.update_id}:`);
+
+  const e = err.error;
+
+  logBotInternalError(e);
+};
+
+// handle errors from bot.catch
 const handleBotError = (err: BotError) => {
   logBotError(err);
 };
