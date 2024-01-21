@@ -2,8 +2,8 @@ import { Bot, session } from 'grammy';
 import { conversations } from '@grammyjs/conversations';
 import { autoRetry } from '@grammyjs/auto-retry';
 import { BotContext, BotInstance } from './types';
-import setBotInfo from './info';
 import commands from './commands';
+import setBotInfo from './utils/info';
 import handleBotError from './utils/error';
 
 const { BOT_TOKEN } = process.env;

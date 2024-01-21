@@ -1,6 +1,6 @@
-import { commandsUserSuggestions } from './commands';
-import { handleInternalBotError } from './utils/error';
-import { BotInstance } from './types';
+import { commandsUserSuggestions } from '../commands';
+import { handleInternalBotError } from './error';
+import { BotInstance } from '../types';
 
 const botDescription = `Bot's description`;
 
