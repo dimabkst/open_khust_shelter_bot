@@ -1,8 +1,8 @@
-import { Context } from 'grammy';
+import { BotContext } from '../types';
 
 export const startUserSuggestionInfo = { command: 'start', description: 'Start the bot' };
 
-const start = (ctx: Context) => {
+const start = (ctx: BotContext) => {
   ctx.reply('Hello world!');
 };
 

@@ -1,6 +1,6 @@
-import { Bot } from 'grammy';
 import { commandsUserSuggestions } from './commands';
 import { handleInternalBotError } from './utils/error';
+import { BotInstance } from './types';
 
 const botDescription = `Bot's description`;
 
@@ -8,7 +8,7 @@ const botName = 'Open Khust Shelter Bot';
 
 const botShortDescription = `Bot's short description`;
 
-const setBotInfo = async (bot: Bot) => {
+const setBotInfo = async (bot: BotInstance) => {
   try {
     await bot.api.setMyCommands(commandsUserSuggestions);
 

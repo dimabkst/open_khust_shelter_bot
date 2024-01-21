@@ -1,3 +1,4 @@
-import { Bot, webhookCallback } from 'grammy';
+import { webhookCallback } from 'grammy';
+import { BotInstance } from '../types';
 
-export const expressWebhookCallback = (bot: Bot) => webhookCallback(bot, 'express');
+export const expressWebhookCallback = (bot: BotInstance) => webhookCallback(bot, 'express');
