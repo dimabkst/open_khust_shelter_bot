@@ -1,8 +1,9 @@
 import { Bot, session } from 'grammy';
-import { conversations } from '@grammyjs/conversations';
+import { conversations as conversationsPlugin } from '@grammyjs/conversations';
 import { autoRetry } from '@grammyjs/auto-retry';
 import { BotContext, BotInstance } from './types';
 import commands from './commands';
+import conversations from './conversations';
 import setBotInfo from './utils/info';
 import handleBotError from './utils/error';
 
@@ -24,12 +25,17 @@ bot.use(
 );
 
 // Install the conversations plugin to handle conversations
-bot.use(conversations());
+bot.use(conversationsPlugin());
 
 // set bot info
 (async () => await setBotInfo(bot))();
 
 bot.use(commands);
+bot.use(conversations);
+
+bot.command('complain', async (ctx) => {
+  await ctx.conversation.enter('complaint');
+});
 
 bot.catch(handleBotError);
 

@@ -17,3 +17,50 @@ model User {
   username     String?
   languageCode String?
 }
+
+model Shelter {
+  id         String      @id @default(uuid())
+  name       String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now()) @updatedAt
+  complaints Complaint[]
+}
+
+model Complainant {
+  id          String      @id @default(uuid())
+  telegramId  String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+  userName    String?
+  firstName   String?
+  lastName    String?
+  patronymic  String?
+  phoneNumber String?
+  complaints  Complaint[]
+}
+
+model Complaint {
+  id            String            @id @default(uuid())
+  shelterId     String
+  shelter       Shelter           @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  complainantId String
+  complainant   Complainant       @relation(fields: [complainantId], references: [id], onDelete: Cascade)
+  reasons       ComplaintReason[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
+}
+
+model ComplaintReason {
+  id          String              @id @default(uuid())
+  complaintId String
+  complaint   Complaint           @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  type        ComplaintReasonType
+  reason      String?
+}
+
+enum ComplaintReasonType {
+  CLOSED_SHELTER
+  NOT_ALLOWED_TO_ENTER
+  ABSENT_SHELTER
+  OTHER
+}

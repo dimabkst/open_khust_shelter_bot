@@ -1,22 +1,51 @@
-import { commandsUserSuggestions } from '../commands';
 import { handleInternalBotError } from './error';
 import { BotInstance } from '../types';
+import { commandsUserSuggestions } from '../commands';
+import { getBotInfo, saveBotInfo } from '../../core/utils/bot';
+import { BotCommand } from '../../core/utils/types';
 
-const botDescription = `Bot's description`;
-
-const botName = 'Open Khust Shelter Bot';
-
-const botShortDescription = `Bot's short description`;
+const botInfo = {
+  name: 'Open Khust Shelter Bot',
+  description: `Bot's description`,
+  shortDescription: `Bot's short description`,
+  commands: commandsUserSuggestions,
+};
 
 const setBotInfo = async (bot: BotInstance) => {
   try {
-    await bot.api.setMyCommands(commandsUserSuggestions);
+    const botInfoUpdateCommands = {
+      name: (name: string) => bot.api.setMyName(name),
+      description: (description: string) => bot.api.setMyDescription(description),
+      shortDescription: (shortDescription: string) => bot.api.setMyShortDescription(shortDescription),
+      commands: (commands: BotCommand[]) => bot.api.setMyCommands(commands),
+    };
 
-    await bot.api.setMyDescription(botDescription);
+    const shouldSetInfo = Object.fromEntries(Object.keys(botInfo).map((key) => [key, false])) as Record<
+      keyof typeof botInfo,
+      boolean
+    >;
 
-    await bot.api.setMyName(botName);
+    const currentBotInfo = await getBotInfo();
 
-    await bot.api.setMyShortDescription(botShortDescription);
+    if (currentBotInfo) {
+      Object.keys(botInfo).map(async (key) => {
+        if (botInfo[key] !== currentBotInfo[key]) {
+          shouldSetInfo[key] = true;
+        }
+      });
+    } else {
+      await saveBotInfo(botInfo);
+    }
+
+    for (const key of Object.entries(shouldSetInfo)
+      .filter(([key, value]) => value)
+      .map(([key, value]) => key)) {
+      await botInfoUpdateCommands[key](botInfo[key]);
+
+      // commented due to using auto retry plugin
+      // to avoid to many requests error
+      // setTimeout(() => {}, 1000);
+    }
   } catch (e) {
     handleInternalBotError(e);
   }
