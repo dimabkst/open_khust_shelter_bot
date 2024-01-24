@@ -61,7 +61,9 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   // asking about contact info
   let incognito: boolean;
 
-  ctx.reply(`Бажаєте подати заявку анонімно?`, { reply_markup: yesOrNoInlineKeyboard });
+  ctx.reply(`Бажаєте подати заявку анонімно?\n(У разі анонімної подачі заяви, ми не зможемо повідомити Вас про її статус)`, {
+    reply_markup: yesOrNoInlineKeyboard,
+  });
 
   const { callbackQuery: yesOrNoCallbackQuery } = await conversation.waitForCallbackQuery(
     Object.values(yesOrNoButtons).map((b) => b.data)
@@ -149,7 +151,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   const complaint = await conversation.external(() => createComplaint(complaintPayload));
 
-  ctx.reply(`Дякуємо за ваше звернення, найближчим часом ми повідомимо вам про його статус.`);
+  ctx.reply(`Дякуємо за ваше звернення${incognito ? '' : ', найближчим часом ми повідомимо Вас про його статус'}.`);
 
   await conversation.external(() => createComplaintAdminNotification({ complaintId: complaint.id }));
 

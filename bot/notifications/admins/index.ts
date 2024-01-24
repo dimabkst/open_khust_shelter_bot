@@ -1,3 +1,3 @@
-import createComplaintAdminNotification from './create-complain-notification';
+import createComplaintAdminNotification from './create-complaint-notification';
 
 export { createComplaintAdminNotification };
