@@ -1,5 +1,6 @@
 import { ComplaintReasonType } from '@prisma/client';
 import { BotContext, BotConversation } from '../types';
+import { requestContactCustomKeyboard } from '../keyboards';
 import { getShelterById, getShelters } from '../../core/shelters';
 import { createComplainant, createComplaint } from '../../core/complaints';
 import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
@@ -72,16 +73,16 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   // TODO: add ability to ask to save info, then use id of existing complainant
   do {
-    ctx.reply(`Would you like to share your contact info: y/n`);
+    ctx.reply(`Would you like to make incognito complaint: y/n`);
 
     const {
-      msg: { text: wouldShareContactInfo },
+      msg: { text: incognitoComplaint },
     } = await conversation.waitFor('message:text');
 
-    if (wouldShareContactInfo.toLowerCase() === 'y') {
-      incognito = false;
-    } else if (wouldShareContactInfo.toLowerCase() === 'n') {
+    if (incognitoComplaint.toLowerCase() === 'y') {
       incognito = true;
+    } else if (incognitoComplaint.toLowerCase() === 'n') {
+      incognito = false;
     }
   } while (incognito === undefined);
 
@@ -90,34 +91,65 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     userName: ctx.from.username,
   };
 
-  // TODO: add share contact
   if (!incognito) {
+    let contactByTelegram: boolean;
+
+    do {
+      ctx.reply(`Would you like to share your contact via Telegram: y/n`);
+
+      const {
+        msg: { text: contactByTelegramAnswer },
+      } = await conversation.waitFor('message:text');
+
+      if (contactByTelegramAnswer.toLowerCase() === 'y') {
+        contactByTelegram = true;
+      } else if (contactByTelegramAnswer.toLowerCase() === 'n') {
+        contactByTelegram = false;
+      }
+    } while (contactByTelegram === undefined);
+
     let fullName: string;
     let phoneNumber: string;
 
-    do {
-      ctx.reply(`What is yor full name?`);
+    if (contactByTelegram) {
+      await ctx.reply('Press the button to share contact', {
+        reply_markup: requestContactCustomKeyboard,
+      });
 
       const {
-        msg: { text: providedFullName },
-      } = await conversation.waitFor('message:text');
+        msg: { contact: telegramContact },
+      } = await conversation.waitFor('message:contact');
 
-      if (providedFullName.length) {
-        fullName = providedFullName;
-      }
-    } while (!fullName);
+      fullName = [telegramContact.first_name, telegramContact.last_name].join(' ');
 
-    do {
-      ctx.reply(`What is yor phone number?`);
+      phoneNumber = telegramContact.phone_number;
+    }
 
-      const {
-        msg: { text: providedPhoneNumber },
-      } = await conversation.waitFor('message:text');
+    if (!fullName && !phoneNumber) {
+      do {
+        ctx.reply(`What is yor full name?`);
 
-      if (providedPhoneNumber.length) {
-        phoneNumber = providedPhoneNumber;
-      }
-    } while (!phoneNumber);
+        const {
+          msg: { text: providedFullName },
+        } = await conversation.waitFor('message:text');
+
+        if (providedFullName.length) {
+          fullName = providedFullName;
+        }
+      } while (!fullName);
+
+      do {
+        ctx.reply(`What is yor phone number?`);
+
+        const {
+          msg: { text: providedPhoneNumber },
+        } = await conversation.waitFor('message:text');
+
+        if (providedPhoneNumber.length) {
+          phoneNumber = providedPhoneNumber;
+        }
+      } while (!phoneNumber);
+    }
 
     complainantPayload.fullName = fullName;
     complainantPayload.phoneNumber = phoneNumber;
