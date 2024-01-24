@@ -18,6 +18,19 @@ const getComplaintById = async (payload: IGetComplaintByIdPayload) => {
           district: true,
         },
       },
+      complainant: {
+        select: {
+          username: true,
+          fullName: true,
+          phoneNumber: true,
+        },
+      },
+      reasons: {
+        select: {
+          type: true,
+          reason: true,
+        },
+      },
     },
   });
 
