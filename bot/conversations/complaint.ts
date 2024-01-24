@@ -11,13 +11,11 @@ import { createComplainant, createComplaint } from '../../core/complaints';
 import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
 
 const complaint = async (conversation: BotConversation, ctx: BotContext) => {
-  ctx.reply('Complaint process started!');
-
   // TODO: add pagination logic from inline keyboard
   // choosing shelter
   const sheltersKeyboard = await conversation.external(() => sheltersInlineKeyboard());
 
-  ctx.reply('Choose which shelter to complain about', {
+  ctx.reply('Оберіть укриття з яким виникли проблема:', {
     reply_markup: sheltersKeyboard,
   });
 
@@ -32,7 +30,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   } while (!shelterId);
 
   // complaint reason type
-  ctx.reply(`Choose complaint reason`, {
+  ctx.reply(`З чим виникла проблема:`, {
     reply_markup: complaintReasonTypesInlineKeyboard,
   });
 
@@ -48,7 +46,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   let complaintReason: string;
 
   if (complaintReasonType === ComplaintReasonType.OTHER) {
-    ctx.reply(`Provide other complaint reason`);
+    ctx.reply(`Будь ласка, уточніть з чим саме виникла проблема`);
 
     const {
       msg: { text: providedComplaintReason },
@@ -63,7 +61,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   // asking about contact info
   let incognito: boolean;
 
-  ctx.reply(`Would you like to make incognito complaint`, { reply_markup: yesOrNoInlineKeyboard });
+  ctx.reply(`Бажаєте подати заявку анонімно?`, { reply_markup: yesOrNoInlineKeyboard });
 
   const { callbackQuery: yesOrNoCallbackQuery } = await conversation.waitForCallbackQuery(
     Object.values(yesOrNoButtons).map((b) => b.data)
@@ -86,7 +84,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   if (!incognito) {
     let contactByTelegram: boolean;
 
-    ctx.reply(`Would you like to share your contact via Telegram`, { reply_markup: yesOrNoInlineKeyboard });
+    ctx.reply(`Бажаєте поділитись Телеграм контактом?`, { reply_markup: yesOrNoInlineKeyboard });
 
     const { callbackQuery: yesOrNoCallbackQuery } = await conversation.waitForCallbackQuery(
       Object.values(yesOrNoButtons).map((b) => b.data)
@@ -105,7 +103,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
     // TODO: fix handling cancel button
     if (contactByTelegram) {
-      await ctx.reply('Press the button to share contact', {
+      await ctx.reply('Натисніть "Поділитись Контактом"', {
         reply_markup: requestContactCustomKeyboard,
       });
 
@@ -119,7 +117,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     }
 
     if (!fullName && !phoneNumber) {
-      ctx.reply(`What is yor full name?`);
+      ctx.reply(`Будь ласка, напишіть Ваше прзівище, ім'я та по батькові`);
 
       const {
         msg: { text: providedFullName },
@@ -127,7 +125,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
       fullName = providedFullName;
 
-      ctx.reply(`What is yor phone number?`);
+      ctx.reply(`Будь ласка, введіть Ваш номер телефону`);
 
       const {
         msg: { text: providedPhoneNumber },
@@ -149,9 +147,9 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     reason: complaintReason,
   };
 
-  const complaint = await conversation.external(() => createComplaint(complaintPayload));
+  await conversation.external(() => createComplaint(complaintPayload));
 
-  ctx.reply(`Ending complaint conversation. Created complain: ${complaint.id}`);
+  ctx.reply(`Дякуємо за ваше звернення, найближчим часом ми повідомимо вам про його статус.`);
 
   return;
 };

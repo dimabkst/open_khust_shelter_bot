@@ -1,6 +1,6 @@
 import { Keyboard } from 'grammy';
 
-export const buttons = ['Share Contact'];
+export const buttons = ['Поділитись Контактом'];
 
 const buttonRows = buttons.map((button) => [Keyboard.requestContact(button)]);
 

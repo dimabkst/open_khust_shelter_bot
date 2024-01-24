@@ -6,8 +6,8 @@ import { BotCommand } from '../../core/utils/types';
 
 const botInfo = {
   name: 'Open Khust Shelter Bot',
-  description: `Bot's description`,
-  shortDescription: `Bot's short description`,
+  description: `Вітаємо! Цей бот створено для оперативного вирішення проблем, що стосуються укриттів Хустського району під час повітряної тривоги.\n\nДля початку роботи натисніть "Розпочати"`,
+  shortDescription: `Вітаємо! Цей бот - вирішує проблеми, що стосуються укриттів Хустського району.`,
   commands: commandsUserSuggestions,
 };
 
