@@ -13,3 +13,7 @@ export interface ICreateComplaintPayload {
   reasonType: ComplaintReasonType;
   reason?: string;
 }
+
+export interface IGetComplaintByIdPayload {
+  id: string;
+}

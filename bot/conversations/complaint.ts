@@ -9,6 +9,7 @@ import {
 import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
 import { createComplainant, createComplaint } from '../../core/complaints';
 import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
+import { createComplaintAdminNotification } from '../notifications';
 
 const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   // TODO: add pagination logic from inline keyboard
@@ -57,7 +58,6 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   // TODO: add ability to select few reasons or remove reason table from db
 
-  // consider moving to separate conversation
   // asking about contact info
   let incognito: boolean;
 
@@ -147,9 +147,11 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     reason: complaintReason,
   };
 
-  await conversation.external(() => createComplaint(complaintPayload));
+  const complaint = await conversation.external(() => createComplaint(complaintPayload));
 
   ctx.reply(`Дякуємо за ваше звернення, найближчим часом ми повідомимо вам про його статус.`);
+
+  await conversation.external(() => createComplaintAdminNotification({ complaintId: complaint.id }));
 
   return;
 };
