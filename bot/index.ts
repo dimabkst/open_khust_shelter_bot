@@ -38,6 +38,10 @@ bot.command('complain', async (ctx) => {
   await ctx.conversation.enter('complaint');
 });
 
+bot.command('close_conversation', async (ctx) => {
+  await ctx.conversation.exit();
+});
+
 // handle not caught callback queries
 bot.on('callback_query:data', async (ctx) => {
   logger.info('Unknown button event with payload', ctx.callbackQuery.data);

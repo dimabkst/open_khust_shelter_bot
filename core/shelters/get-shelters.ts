@@ -11,6 +11,10 @@ const getShelters = async (payload: IGetSheltersPayload) => {
 
   const getQuery = prisma.shelter.findMany({
     ...pagination,
+    select: {
+      id: true,
+      name: true,
+    },
   });
 
   const [shelters, count] = await Promise.all([getQuery, countQuery]);

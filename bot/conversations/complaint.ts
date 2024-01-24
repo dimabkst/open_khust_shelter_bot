@@ -1,40 +1,35 @@
 import { ComplaintReasonType } from '@prisma/client';
 import { BotContext, BotConversation } from '../types';
-import { requestContactCustomKeyboard, yesOrNoInlineKeyboard, complaintReasonTypesInlineKeyboard } from '../keyboards';
+import {
+  requestContactCustomKeyboard,
+  yesOrNoInlineKeyboard,
+  complaintReasonTypesInlineKeyboard,
+  sheltersInlineKeyboard,
+} from '../keyboards';
 import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
-import { getShelterById, getShelters } from '../../core/shelters';
 import { createComplainant, createComplaint } from '../../core/complaints';
 import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
-import { HttpError } from '../../core/utils/error';
 
 const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   ctx.reply('Complaint process started!');
 
   // TODO: add pagination logic from inline keyboard
   // choosing shelter
-  const shelters = await conversation.external(() => getShelters({}));
+  const sheltersKeyboard = await conversation.external(() => sheltersInlineKeyboard());
 
-  let shelter: { id: string; name: string };
+  ctx.reply('Choose which shelter to complain about', {
+    reply_markup: sheltersKeyboard,
+  });
+
+  let shelterId: string;
 
   do {
-    ctx.reply(`Choose which shelter to complain about: ${shelters.rows.map((s) => s.id)}`);
+    const { callbackQuery: shelterCallbackQuery } = await conversation.waitFor('callback_query');
 
-    const {
-      msg: { text: shelterId },
-    } = await conversation.waitFor('message:text');
+    if (shelterCallbackQuery.data.split(':')[0] === 'shelterId') shelterId = shelterCallbackQuery.data.split(':')[1];
 
-    shelter = await conversation.external(async () => {
-      try {
-        return await getShelterById({ id: shelterId });
-      } catch (e) {
-        if (!(e instanceof HttpError)) {
-          throw e;
-        }
-      }
-    });
-  } while (!shelter);
-
-  ctx.reply(`You chose shelter: ${shelter.id}`);
+    await ctx.api.answerCallbackQuery(shelterCallbackQuery.id);
+  } while (!shelterId);
 
   // complaint reason type
   ctx.reply(`Choose complaint reason`, {
@@ -148,7 +143,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   const complainant = await conversation.external(() => createComplainant(complainantPayload));
 
   const complaintPayload: ICreateComplaintPayload = {
-    shelterId: shelter.id,
+    shelterId,
     complainantId: complainant.id,
     reasonType: complaintReasonType,
     reason: complaintReason,

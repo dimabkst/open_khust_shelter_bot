@@ -18,4 +18,4 @@ export const paginate = (limit, page): IPagination => {
   return pagination;
 };
 
-export const responsePayload = (count: number, rows: Array<any>, meta?: object) => ({ count, ...meta, rows });
+export const responsePayload = <T>(count: number, rows: Array<T>, meta?: object) => ({ count, ...meta, rows });
