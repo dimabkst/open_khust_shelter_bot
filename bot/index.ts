@@ -31,12 +31,8 @@ bot.use(conversationsPlugin());
 // set bot info
 (async () => await setBotInfo(bot))();
 
-bot.use(commands);
 bot.use(conversations);
-
-bot.command('complain', async (ctx) => {
-  await ctx.conversation.enter('complaint');
-});
+bot.use(commands);
 
 bot.command('close_conversation', async (ctx) => {
   await ctx.conversation.exit();

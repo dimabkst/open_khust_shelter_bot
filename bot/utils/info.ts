@@ -29,7 +29,7 @@ const setBotInfo = async (bot: BotInstance) => {
 
     if (currentBotInfo) {
       Object.keys(botInfo).map(async (key) => {
-        if (botInfo[key] !== currentBotInfo[key]) {
+        if (Array.isArray(botInfo[key]) || botInfo[key] !== currentBotInfo[key]) {
           shouldSetInfo[key] = true;
         }
       });
@@ -41,10 +41,10 @@ const setBotInfo = async (bot: BotInstance) => {
       .filter(([key, value]) => value)
       .map(([key, value]) => key)) {
       await botInfoUpdateCommands[key](botInfo[key]);
+    }
 
-      // commented due to using auto retry plugin
-      // to avoid to many requests error
-      // setTimeout(() => {}, 1000);
+    if (Object.values(shouldSetInfo).some((value) => value)) {
+      await saveBotInfo(botInfo);
     }
   } catch (e) {
     handleInternalBotError(e);
