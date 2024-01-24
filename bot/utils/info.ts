@@ -1,7 +1,7 @@
 import { handleInternalBotError } from './error';
 import { BotInstance } from '../types';
 import { commandsUserSuggestions } from '../commands';
-import { getBotInfo, saveBotInfo } from '../../core/utils/bot';
+import { getBotInfo, saveBotInfo } from '../../core/utils/bot-info';
 import { BotCommand } from '../../core/utils/types';
 
 const botInfo = {

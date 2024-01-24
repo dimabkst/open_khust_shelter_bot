@@ -15,3 +15,13 @@ export interface ISavedBotInfo {
   shortDescription: string;
   commands: BotCommand[];
 }
+
+export interface IPaginationPayload {
+  limit?: string;
+  page?: string;
+}
+
+export interface IPagination {
+  take?: number;
+  skip?: number;
+}
