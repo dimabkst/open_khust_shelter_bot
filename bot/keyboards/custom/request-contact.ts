@@ -1,9 +1,9 @@
 import { Keyboard } from 'grammy';
 
-const labels = ['Share Contact'];
+export const buttons = ['Share Contact'];
 
-const buttonRows = labels.map((label) => [Keyboard.requestContact(label)]);
+const buttonRows = buttons.map((button) => [Keyboard.requestContact(button)]);
 
-const requestContactCustomKeyboard = Keyboard.from(buttonRows).resized().persistent().oneTime();
+const requestContactCustomKeyboard = Keyboard.from(buttonRows).resized().oneTime();
 
 export default requestContactCustomKeyboard;

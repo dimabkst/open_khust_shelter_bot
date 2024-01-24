@@ -1,6 +1,7 @@
 import { ComplaintReasonType } from '@prisma/client';
 import { BotContext, BotConversation } from '../types';
-import { requestContactCustomKeyboard } from '../keyboards';
+import { requestContactCustomKeyboard, yesOrNoInlineKeyboard, complaintReasonTypesInlineKeyboard } from '../keyboards';
+import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
 import { getShelterById, getShelters } from '../../core/shelters';
 import { createComplainant, createComplaint } from '../../core/complaints';
 import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
@@ -10,6 +11,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   ctx.reply('Complaint process started!');
 
   // TODO: add pagination logic from inline keyboard
+  // choosing shelter
   const shelters = await conversation.external(() => getShelters({}));
 
   let shelter: { id: string; name: string };
@@ -34,83 +36,79 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   ctx.reply(`You chose shelter: ${shelter.id}`);
 
-  const complaintReasonTypes = Object.values(ComplaintReasonType);
+  // complaint reason type
+  ctx.reply(`Choose complaint reason`, {
+    reply_markup: complaintReasonTypesInlineKeyboard,
+  });
 
-  let complaintReasonType: ComplaintReasonType;
+  const { callbackQuery: complaintReasonTypeCallbackQuery } = await conversation.waitForCallbackQuery(
+    Object.values(ComplaintReasonType)
+  );
 
-  do {
-    ctx.reply(`Choose complaint reason: ${complaintReasonTypes}`);
+  const complaintReasonType = complaintReasonTypeCallbackQuery.data as ComplaintReasonType;
 
-    const {
-      msg: { text: chosenComplaintReasonType },
-    } = await conversation.waitFor('message:text');
+  await ctx.api.answerCallbackQuery(complaintReasonTypeCallbackQuery.id);
 
-    if (complaintReasonTypes.includes(chosenComplaintReasonType as ComplaintReasonType)) {
-      complaintReasonType = chosenComplaintReasonType as ComplaintReasonType;
-    }
-  } while (!complaintReasonType);
-
+  // complaint reason
   let complaintReason: string;
 
   if (complaintReasonType === ComplaintReasonType.OTHER) {
-    do {
-      ctx.reply(`Provide other complaint reason`);
+    ctx.reply(`Provide other complaint reason`);
 
-      const {
-        msg: { text: providedComplaintReason },
-      } = await conversation.waitFor('message:text');
+    const {
+      msg: { text: providedComplaintReason },
+    } = await conversation.waitFor('message:text');
 
-      if (providedComplaintReason.length) {
-        complaintReason = providedComplaintReason;
-      }
-    } while (!complaintReason);
+    complaintReason = providedComplaintReason;
   }
 
   // TODO: add ability to select few reasons or remove reason table from db
 
   // consider moving to separate conversation
+  // asking about contact info
   let incognito: boolean;
 
-  // TODO: add ability to ask to save info, then use id of existing complainant
-  do {
-    ctx.reply(`Would you like to make incognito complaint: y/n`);
+  ctx.reply(`Would you like to make incognito complaint`, { reply_markup: yesOrNoInlineKeyboard });
 
-    const {
-      msg: { text: incognitoComplaint },
-    } = await conversation.waitFor('message:text');
+  const { callbackQuery: yesOrNoCallbackQuery } = await conversation.waitForCallbackQuery(
+    Object.values(yesOrNoButtons).map((b) => b.data)
+  );
 
-    if (incognitoComplaint.toLowerCase() === 'y') {
-      incognito = true;
-    } else if (incognitoComplaint.toLowerCase() === 'n') {
-      incognito = false;
-    }
-  } while (incognito === undefined);
+  if (yesOrNoCallbackQuery.data === yesOrNoButtons.yes.data) {
+    incognito = true;
+  } else {
+    incognito = false;
+  }
+
+  await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
   const complainantPayload: ICreateComplainantPayload = {
     telegramId: ctx.from.id.toString(),
     userName: ctx.from.username,
   };
 
+  // TODO: add ability to ask to save info, then use id of existing complainant
   if (!incognito) {
     let contactByTelegram: boolean;
 
-    do {
-      ctx.reply(`Would you like to share your contact via Telegram: y/n`);
+    ctx.reply(`Would you like to share your contact via Telegram`, { reply_markup: yesOrNoInlineKeyboard });
 
-      const {
-        msg: { text: contactByTelegramAnswer },
-      } = await conversation.waitFor('message:text');
+    const { callbackQuery: yesOrNoCallbackQuery } = await conversation.waitForCallbackQuery(
+      Object.values(yesOrNoButtons).map((b) => b.data)
+    );
 
-      if (contactByTelegramAnswer.toLowerCase() === 'y') {
-        contactByTelegram = true;
-      } else if (contactByTelegramAnswer.toLowerCase() === 'n') {
-        contactByTelegram = false;
-      }
-    } while (contactByTelegram === undefined);
+    if (yesOrNoCallbackQuery.data === yesOrNoButtons.yes.data) {
+      contactByTelegram = true;
+    } else if (yesOrNoCallbackQuery.data === yesOrNoButtons.no.data) {
+      contactByTelegram = false;
+    }
+
+    await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
     let fullName: string;
     let phoneNumber: string;
 
+    // TODO: fix handling cancel button
     if (contactByTelegram) {
       await ctx.reply('Press the button to share contact', {
         reply_markup: requestContactCustomKeyboard,
@@ -126,29 +124,21 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     }
 
     if (!fullName && !phoneNumber) {
-      do {
-        ctx.reply(`What is yor full name?`);
+      ctx.reply(`What is yor full name?`);
 
-        const {
-          msg: { text: providedFullName },
-        } = await conversation.waitFor('message:text');
+      const {
+        msg: { text: providedFullName },
+      } = await conversation.waitFor('message:text');
 
-        if (providedFullName.length) {
-          fullName = providedFullName;
-        }
-      } while (!fullName);
+      fullName = providedFullName;
 
-      do {
-        ctx.reply(`What is yor phone number?`);
+      ctx.reply(`What is yor phone number?`);
 
-        const {
-          msg: { text: providedPhoneNumber },
-        } = await conversation.waitFor('message:text');
+      const {
+        msg: { text: providedPhoneNumber },
+      } = await conversation.waitFor('message:text');
 
-        if (providedPhoneNumber.length) {
-          phoneNumber = providedPhoneNumber;
-        }
-      } while (!phoneNumber);
+      phoneNumber = providedPhoneNumber;
     }
 
     complainantPayload.fullName = fullName;

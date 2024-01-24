@@ -6,6 +6,7 @@ import commands from './commands';
 import conversations from './conversations';
 import setBotInfo from './utils/info';
 import handleBotError from './utils/error';
+import logger from '../core/utils/logger';
 
 const { BOT_TOKEN } = process.env;
 
@@ -35,6 +36,13 @@ bot.use(conversations);
 
 bot.command('complain', async (ctx) => {
   await ctx.conversation.enter('complaint');
+});
+
+// handle not caught callback queries
+bot.on('callback_query:data', async (ctx) => {
+  logger.info('Unknown button event with payload', ctx.callbackQuery.data);
+
+  await ctx.answerCallbackQuery(); // remove loading animation
 });
 
 bot.catch(handleBotError);
