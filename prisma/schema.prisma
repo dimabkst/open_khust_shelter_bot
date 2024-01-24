@@ -10,12 +10,21 @@ datasource db {
 
 model User {
   id           String  @id @default(uuid())
-  telegramId   String  @unique
+  telegramId   Int     @unique
   isBot        Boolean @default(false)
   firstName    String
   lastName     String?
   username     String?
   languageCode String?
+  phoneNumber  String?
+  admin        Admin?
+}
+
+model Admin {
+  id        String @id @default(uuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  districts Int[]
 }
 
 model Shelter {
@@ -23,15 +32,16 @@ model Shelter {
   name       String
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @default(now()) @updatedAt
+  district   Int         @default(0)
   complaints Complaint[]
 }
 
 model Complainant {
   id          String      @id @default(uuid())
-  telegramId  String
+  telegramId  Int
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now()) @updatedAt
-  userName    String?
+  username    String?
   fullName    String?
   phoneNumber String?
   complaints  Complaint[]

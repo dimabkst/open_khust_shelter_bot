@@ -76,8 +76,8 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
   const complainantPayload: ICreateComplainantPayload = {
-    telegramId: ctx.from.id.toString(),
-    userName: ctx.from.username,
+    telegramId: ctx.from.id,
+    username: ctx.from.username,
   };
 
   // TODO: add ability to ask to save info, then use id of existing complainant

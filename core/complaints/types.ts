@@ -1,8 +1,8 @@
 import { ComplaintReasonType } from '@prisma/client';
 
 export interface ICreateComplainantPayload {
-  telegramId: string;
-  userName?: string;
+  telegramId: number;
+  username?: string;
   fullName?: string;
   phoneNumber?: string;
 }
