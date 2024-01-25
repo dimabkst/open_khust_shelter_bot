@@ -11,13 +11,19 @@ const getComplaintById = async (payload: IGetComplaintByIdPayload) => {
     },
     select: {
       id: true,
-      shelter: {
+      settlement: {
         select: {
           id: true,
           name: true,
-          district: true,
+          hromada: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
+      shelterName: true,
       complainant: {
         select: {
           username: true,
@@ -25,12 +31,8 @@ const getComplaintById = async (payload: IGetComplaintByIdPayload) => {
           phoneNumber: true,
         },
       },
-      reasons: {
-        select: {
-          type: true,
-          reason: true,
-        },
-      },
+      reasonType: true,
+      reason: true,
     },
   });
 

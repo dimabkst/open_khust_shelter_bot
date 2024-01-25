@@ -1,15 +1,14 @@
 import { ComplaintReasonType } from '@prisma/client';
 
-export interface ICreateComplainantPayload {
-  telegramId: string;
-  username?: string;
-  fullName?: string;
-  phoneNumber?: string;
-}
-
 export interface ICreateComplaintPayload {
-  shelterId: string;
-  complainantId: string;
+  settlementId: number;
+  shelterName: string;
+  complainant: {
+    telegramId: string;
+    username?: string;
+    fullName?: string;
+    phoneNumber?: string;
+  };
   reasonType: ComplaintReasonType;
   reason?: string;
 }

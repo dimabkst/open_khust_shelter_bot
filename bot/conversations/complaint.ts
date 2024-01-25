@@ -4,31 +4,57 @@ import {
   requestContactCustomKeyboard,
   yesOrNoInlineKeyboard,
   complaintReasonTypesInlineKeyboard,
-  sheltersInlineKeyboard,
+  hromadasInlineKeyboard,
+  settlementsInlineKeyboard,
 } from '../keyboards';
-import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
-import { createComplainant, createComplaint } from '../../core/complaints';
-import { ICreateComplainantPayload, ICreateComplaintPayload } from '../../core/complaints/types';
 import { createComplaintAdminNotification } from '../notifications';
+import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
+import { createComplaint } from '../../core/complaints';
+import { ICreateComplaintPayload } from '../../core/complaints/types';
 
 const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   // TODO: add pagination logic from inline keyboard
-  // choosing shelter
-  const sheltersKeyboard = await conversation.external(() => sheltersInlineKeyboard());
+  // choosing hromada
+  const hromadasKeyboard = await conversation.external(() => hromadasInlineKeyboard());
 
-  ctx.reply('Оберіть укриття з яким виникли проблема:', {
-    reply_markup: sheltersKeyboard,
+  ctx.reply('Оберіть територіальну громаду в якому знаходиться укриття:', {
+    reply_markup: hromadasKeyboard,
   });
 
-  let shelterId: string;
+  let hromadaId: number;
 
   do {
-    const { callbackQuery: shelterCallbackQuery } = await conversation.waitFor('callback_query');
+    const { callbackQuery: hromadaCallbackQuery } = await conversation.waitFor('callback_query');
 
-    if (shelterCallbackQuery.data.split(':')[0] === 'shelterId') shelterId = shelterCallbackQuery.data.split(':')[1];
+    if (hromadaCallbackQuery.data.split(':')[0] === 'hromadaId') hromadaId = Number(hromadaCallbackQuery.data.split(':')[1]);
 
-    await ctx.api.answerCallbackQuery(shelterCallbackQuery.id);
-  } while (!shelterId);
+    await ctx.api.answerCallbackQuery(hromadaCallbackQuery.id);
+  } while (hromadaId === undefined);
+
+  // choosing settlement
+  const settlementsKeyboard = await conversation.external(() => settlementsInlineKeyboard(hromadaId));
+
+  ctx.reply('Оберіть населений пункт в якому знаходиться укриття:', {
+    reply_markup: settlementsKeyboard,
+  });
+
+  let settlementId: number;
+
+  do {
+    const { callbackQuery: settlementCallbackQuery } = await conversation.waitFor('callback_query');
+
+    if (settlementCallbackQuery.data.split(':')[0] === 'settlementId')
+      settlementId = Number(settlementCallbackQuery.data.split(':')[1]);
+
+    await ctx.api.answerCallbackQuery(settlementCallbackQuery.id);
+  } while (settlementId === undefined);
+
+  // asking for shelter name
+  ctx.reply(`Будь ласка, вкажіть назву проблемного укриття`);
+
+  const {
+    msg: { text: shelterName },
+  } = await conversation.waitFor('message:text');
 
   // complaint reason type
   ctx.reply(`З чим виникла проблема:`, {
@@ -56,8 +82,6 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     complaintReason = providedComplaintReason;
   }
 
-  // TODO: add ability to select few reasons or remove reason table from db
-
   // asking about contact info
   let incognito: boolean;
 
@@ -77,12 +101,11 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
-  const complainantPayload: ICreateComplainantPayload = {
+  const complainantPayload: ICreateComplaintPayload['complainant'] = {
     telegramId: ctx.from.id.toString(),
     username: ctx.from.username,
   };
 
-  // TODO: add ability to ask to save info, then use id of existing complainant
   if (!incognito) {
     let contactByTelegram: boolean;
 
@@ -140,11 +163,10 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     complainantPayload.phoneNumber = phoneNumber;
   }
 
-  const complainant = await conversation.external(() => createComplainant(complainantPayload));
-
   const complaintPayload: ICreateComplaintPayload = {
-    shelterId,
-    complainantId: complainant.id,
+    settlementId,
+    shelterName,
+    complainant: complainantPayload,
     reasonType: complaintReasonType,
     reason: complaintReason,
   };

@@ -1,4 +1,4 @@
-import { complaintReasonTypesInlineKeyboard, sheltersInlineKeyboard } from './complaints';
+import { complaintReasonTypesInlineKeyboard, hromadasInlineKeyboard, settlementsInlineKeyboard } from './complaints';
 import yesOrNoInlineKeyboard from './yes-or-no';
 
-export { complaintReasonTypesInlineKeyboard, sheltersInlineKeyboard, yesOrNoInlineKeyboard };
+export { complaintReasonTypesInlineKeyboard, yesOrNoInlineKeyboard, hromadasInlineKeyboard, settlementsInlineKeyboard };

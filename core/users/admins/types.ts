@@ -1,3 +1,3 @@
-export interface IGetAdminsByDistrict {
-  district: number;
+export interface IGetAdminsBySettlement {
+  settlementId: number;
 }

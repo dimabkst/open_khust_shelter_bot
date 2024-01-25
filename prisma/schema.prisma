@@ -9,61 +9,84 @@ datasource db {
 }
 
 model User {
-  id           String  @id @default(uuid())
-  telegramId   String  @unique
-  isBot        Boolean @default(false)
+  id           String        @id @default(uuid())
+  telegramId   String        @unique
+  isBot        Boolean       @default(false)
   firstName    String
   lastName     String?
   username     String?
   languageCode String?
   phoneNumber  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
   admin        Admin?
+  complainants Complainant[]
 }
 
 model Admin {
-  id        String @id @default(uuid())
-  userId    String @unique
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  districts Int[]
+  id          String            @id @default(uuid())
+  userId      String            @unique
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hromadas    HromadaAdmin[]
+  settlements SettlementAdmin[]
 }
 
-model Shelter {
-  id         String      @id @default(uuid())
-  name       String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @default(now()) @updatedAt
-  district   Int         @default(0)
-  complaints Complaint[]
+model Hromada {
+  id          Int            @id @default(autoincrement())
+  name        String
+  settlements Settlement[]
+  admins      HromadaAdmin[]
+}
+
+model HromadaAdmin {
+  admin     Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  adminId   String
+  hromada   Hromada @relation(fields: [hromadaId], references: [id], onDelete: Cascade)
+  hromadaId Int
+
+  @@id([adminId, hromadaId])
+}
+
+model Settlement {
+  id        Int               @id @default(autoincrement())
+  name      String
+  hromadaId Int
+  hromada   Hromada           @relation(fields: [hromadaId], references: [id], onDelete: Cascade)
+  admins    SettlementAdmin[]
+  complains Complaint[]
+}
+
+model SettlementAdmin {
+  admin        Admin      @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  adminId      String
+  settlement   Settlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  settlementId Int
+
+  @@id([adminId, settlementId])
 }
 
 model Complainant {
-  id          String      @id @default(uuid())
+  id          String    @id @default(uuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
   telegramId  String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now()) @updatedAt
   username    String?
   fullName    String?
   phoneNumber String?
-  complaints  Complaint[]
+  complaintId String    @unique
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
 }
 
 model Complaint {
-  id            String            @id @default(uuid())
-  shelterId     String
-  shelter       Shelter           @relation(fields: [shelterId], references: [id], onDelete: Cascade)
-  complainantId String
-  complainant   Complainant       @relation(fields: [complainantId], references: [id], onDelete: Cascade)
-  reasons       ComplaintReason[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @default(now()) @updatedAt
-}
-
-model ComplaintReason {
-  id          String              @id @default(uuid())
-  complaintId String
-  complaint   Complaint           @relation(fields: [complaintId], references: [id], onDelete: Cascade)
-  type        ComplaintReasonType
-  reason      String?
+  id           String              @id @default(uuid())
+  settlementId Int
+  settlement   Settlement          @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  complainant  Complainant?
+  shelterName  String
+  reasonType   ComplaintReasonType
+  reason       String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @default(now()) @updatedAt
 }
 
 enum ComplaintReasonType {

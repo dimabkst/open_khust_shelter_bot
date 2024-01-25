@@ -3,44 +3,42 @@ import { HttpError } from '../utils/error';
 import { ICreateComplaintPayload } from './types';
 
 const createComplaint = async (payload: ICreateComplaintPayload) => {
-  const { shelterId, complainantId, reasonType, reason } = payload;
+  const { settlementId, shelterName, complainant, reasonType, reason } = payload;
 
-  const shelter = await prisma.shelter.findUnique({
+  const settlement = await prisma.settlement.findUnique({
     where: {
-      id: shelterId,
+      id: settlementId,
     },
     select: {
       id: true,
     },
   });
 
-  if (!shelter) {
-    throw new HttpError(404, 'Shelter cannot be found');
+  if (!settlement) {
+    throw new HttpError(404, 'Settlement cannot be found');
   }
 
-  const complainant = await prisma.complainant.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
-      id: complainantId,
+      telegramId: complainant.telegramId,
     },
     select: {
       id: true,
     },
   });
-
-  if (!complainant) {
-    throw new HttpError(404, 'Complainant cannot be found');
-  }
 
   const complaint = await prisma.complaint.create({
     data: {
-      shelterId,
-      complainantId,
-      reasons: {
+      settlementId,
+      shelterName,
+      complainant: {
         create: {
-          type: reasonType,
-          reason,
+          ...complainant,
+          userId: user?.id || undefined,
         },
       },
+      reasonType,
+      reason: reason || undefined,
     },
     select: {
       id: true,

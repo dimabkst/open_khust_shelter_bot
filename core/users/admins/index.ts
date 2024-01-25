@@ -1,3 +1,3 @@
-import getAdminsByDistrict from './get-admins-by-district';
+import getAdminsBySettlement from './get-admins-by-settlement';
 
-export { getAdminsByDistrict };
+export { getAdminsBySettlement };

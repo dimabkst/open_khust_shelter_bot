@@ -1,4 +1,5 @@
 import complaintReasonTypesInlineKeyboard from './reason-types';
-import sheltersInlineKeyboard from './shelters';
+import hromadasInlineKeyboard from './hromadas';
+import settlementsInlineKeyboard from './settlements';
 
-export { complaintReasonTypesInlineKeyboard, sheltersInlineKeyboard };
+export { complaintReasonTypesInlineKeyboard, hromadasInlineKeyboard, settlementsInlineKeyboard };
