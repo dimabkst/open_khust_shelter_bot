@@ -40,7 +40,7 @@ const createComplaintAdminNotification = async (payload: ICreateComplaintNotific
 
   const complaintReasonInfo = `${complaintReason.type === ComplaintReasonType.OTHER ? complaintReason.reason : complaintReasonTypeTextMapper(complaintReason.type)}`;
 
-  const message = `<b>Створена нова заявка стосовно укриття:</b> \n- ${complaint.shelter.name}.\n<b>Інформація про заявника:</b> \n${complainantInfo}.\n<b>Причина заявки:</b> \n- ${complaintReasonInfo}.`;
+  const message = `<b>Створена нова заявка стосовно укриття:</b> \n- ${complaint.shelter.name}\n<b>Інформація про заявника:</b> \n${complainantInfo}\n<b>Причина заявки:</b> \n- ${complaintReasonInfo}`;
 
   for (const admin of adminsToNotify) {
     await bot.api.sendMessage(admin.user.telegramId, message, { parse_mode: 'HTML' });

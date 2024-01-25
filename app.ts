@@ -27,7 +27,7 @@ checkDb()
 
       logger.info(`Bot started`);
     } else {
-      const port = PORT || 8080;
+      const port = PORT || 8081;
 
       app.use(express.json());
 

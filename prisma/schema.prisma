@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id           String  @id @default(uuid())
-  telegramId   Int     @unique
+  telegramId   String  @unique
   isBot        Boolean @default(false)
   firstName    String
   lastName     String?
@@ -38,7 +38,7 @@ model Shelter {
 
 model Complainant {
   id          String      @id @default(uuid())
-  telegramId  Int
+  telegramId  String
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now()) @updatedAt
   username    String?

@@ -1,5 +1,5 @@
 export interface ICreateUserPayload {
-  telegramId: number;
+  telegramId: string;
   isBot: boolean;
   firstName: string;
   lastName?: string;
@@ -8,5 +8,5 @@ export interface ICreateUserPayload {
 }
 
 export interface IGetUserByTelegramId {
-  telegramId: number;
+  telegramId: string;
 }

@@ -78,7 +78,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
   const complainantPayload: ICreateComplainantPayload = {
-    telegramId: ctx.from.id,
+    telegramId: ctx.from.id.toString(),
     username: ctx.from.username,
   };
 
