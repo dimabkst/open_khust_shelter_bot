@@ -7,6 +7,6 @@ export const yesOrNoButtons = {
 
 const buttonRows = Object.values(yesOrNoButtons).map((button) => [InlineKeyboard.text(button.text, button.data)]);
 
-const yesOrNoInlineKeyboard = InlineKeyboard.from(buttonRows);
+const yesOrNoInlineKeyboard = InlineKeyboard.from(buttonRows).toFlowed(2);
 
 export default yesOrNoInlineKeyboard;

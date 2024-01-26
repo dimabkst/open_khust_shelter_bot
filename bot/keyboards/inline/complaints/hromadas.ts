@@ -9,7 +9,7 @@ const hromadasInlineKeyboard = async () => {
 
   const buttonRows = Object.values(buttons).map((button) => [InlineKeyboard.text(button.text, button.data)]);
 
-  return InlineKeyboard.from(buttonRows);
+  return InlineKeyboard.from(buttonRows).toFlowed(2);
 };
 
 export default hromadasInlineKeyboard;
