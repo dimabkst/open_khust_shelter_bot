@@ -33,7 +33,7 @@ model Admin {
 
 model Hromada {
   id          Int            @id @default(autoincrement())
-  name        String
+  name        String         @unique
   settlements Settlement[]
   admins      HromadaAdmin[]
 }
@@ -54,6 +54,8 @@ model Settlement {
   hromada   Hromada           @relation(fields: [hromadaId], references: [id], onDelete: Cascade)
   admins    SettlementAdmin[]
   complains Complaint[]
+
+  @@unique([hromadaId, name])
 }
 
 model SettlementAdmin {

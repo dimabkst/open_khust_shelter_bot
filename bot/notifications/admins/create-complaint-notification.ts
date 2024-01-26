@@ -12,7 +12,7 @@ const createComplaintAdminNotification = async (payload: ICreateComplaintNotific
 
   const adminsToNotify = await getAdminsBySettlement({ settlementId: complaint.settlement.id });
 
-  const shelterInfo = `${complaint.shelterName}, ${complaint.settlement.name}, ${complaint.settlement.hromada.name}`;
+  const shelterInfo = `${complaint.shelterName}, ${complaint.settlement.name}, ${complaint.settlement.hromada.name} тг`;
 
   const incognito = !complaint.complainant.fullName && !complaint.complainant.phoneNumber;
 
