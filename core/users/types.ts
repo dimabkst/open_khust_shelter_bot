@@ -1,4 +1,4 @@
-export interface ICreateUserPayload {
+export interface IUpsertUserPayload {
   telegramId: string;
   isBot: boolean;
   firstName: string;

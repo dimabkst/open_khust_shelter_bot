@@ -1,7 +1,7 @@
 import prisma from '../db';
-import { ICreateUserPayload } from './types';
+import { IUpsertUserPayload } from './types';
 
-const createUser = async (payload: ICreateUserPayload) => {
+const upsertUser = async (payload: IUpsertUserPayload) => {
   const { lastName, username, languageCode, ...createPayload } = payload;
 
   const user = await prisma.user.upsert({
@@ -28,4 +28,4 @@ const createUser = async (payload: ICreateUserPayload) => {
   return user;
 };
 
-export default createUser;
+export default upsertUser;

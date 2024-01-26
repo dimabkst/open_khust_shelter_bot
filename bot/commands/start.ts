@@ -1,5 +1,5 @@
-import { createUser } from '../../core/users';
 import { BotContext } from '../types';
+import { upsertUser } from '../../core/users';
 
 export const startUserSuggestionInfo = { command: 'start', description: 'Запуск бота' };
 
@@ -10,7 +10,7 @@ const start = async (ctx: BotContext) => {
 
   const user = ctx.from;
 
-  await createUser({
+  await upsertUser({
     telegramId: user.id.toString(),
     isBot: user.is_bot,
     firstName: user.first_name,
