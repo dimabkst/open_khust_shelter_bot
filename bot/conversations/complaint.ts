@@ -126,7 +126,6 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     let fullName: string;
     let phoneNumber: string;
 
-    // TODO: fix handling cancel button
     if (contactByTelegram) {
       await ctx.reply('Натисніть "Поділитись Контактом"', {
         reply_markup: requestContactCustomKeyboard,
@@ -173,7 +172,9 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
 
   const complaint = await conversation.external(() => createComplaint(complaintPayload));
 
-  ctx.reply(`Дякуємо за ваше звернення${incognito ? '' : ', найближчим часом ми повідомимо Вас про його статус'}.`);
+  ctx.reply(`Дякуємо за ваше звернення${incognito ? '' : ', найближчим часом ми повідомимо Вас про його статус'}.`, {
+    reply_markup: { remove_keyboard: true },
+  });
 
   await conversation.external(() => createComplaintAdminNotification({ complaintId: complaint.id }));
 
