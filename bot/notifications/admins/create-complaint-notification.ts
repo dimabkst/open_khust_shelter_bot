@@ -1,7 +1,7 @@
 import { ComplaintReasonType } from '@prisma/client';
 import bot from '../../index';
 import { ICreateComplaintNotificationPayload } from './types';
-import { complaintReasonTypeTextMapper } from '../../utils/text-mappers';
+import { complaintReasonTypeTextMapper, complainantInfoKeysTextMapper } from '../../utils/text-mappers';
 import { getComplaintById } from '../../../core/complaints';
 import { getAdminsBySettlement } from '../../../core/users';
 
@@ -17,17 +17,6 @@ const createComplaintAdminNotification = async (payload: ICreateComplaintNotific
   const incognito = !complaint.complainant.fullName && !complaint.complainant.phoneNumber;
 
   const complainant = complaint.complainant;
-
-  const complainantInfoKeysTextMapper = (key: keyof typeof complainant) => {
-    switch (key) {
-      case 'username':
-        return 'Нікнейм';
-      case 'fullName':
-        return `Ім'я`;
-      case 'phoneNumber':
-        return 'Номер телефону';
-    }
-  };
 
   const complainantInfo = `${
     incognito

@@ -4,6 +4,7 @@ import { autoRetry } from '@grammyjs/auto-retry';
 import { BotContext, BotInstance } from './types';
 import commands from './commands';
 import conversations from './conversations';
+import close_conversation from './commands/close-conversation';
 import setBotInfo from './utils/info';
 import handleBotError from './utils/error';
 import logger from '../core/utils/logger';
@@ -31,12 +32,11 @@ bot.use(conversationsPlugin());
 // set bot info
 (async () => await setBotInfo(bot))();
 
-bot.use(conversations);
-bot.use(commands);
+bot.command(close_conversation.name, close_conversation);
 
-bot.command('close_conversation', async (ctx) => {
-  await ctx.conversation.exit();
-});
+bot.use(conversations);
+
+bot.use(commands);
 
 // handle not caught callback queries
 bot.on('callback_query:data', async (ctx) => {

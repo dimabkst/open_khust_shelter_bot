@@ -1,12 +1,15 @@
 import prisma from '../../db';
-import { IGetAdminsBySettlement } from './types';
+import { IGetAdminsBySettlementPayload } from './types';
 
-const getAdminsBySettlement = async (payload: IGetAdminsBySettlement) => {
+const getAdminsBySettlement = async (payload: IGetAdminsBySettlementPayload) => {
   const { settlementId } = payload;
 
   const admins = await prisma.admin.findMany({
     where: {
       OR: [
+        {
+          isSuperAdmin: true,
+        },
         {
           settlements: {
             some: {

@@ -24,11 +24,12 @@ model User {
 }
 
 model Admin {
-  id          String            @id @default(uuid())
-  userId      String            @unique
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hromadas    HromadaAdmin[]
-  settlements SettlementAdmin[]
+  id           String            @id @default(uuid())
+  userId       String            @unique
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isSuperAdmin Boolean           @default(false)
+  hromadas     HromadaAdmin[]
+  settlements  SettlementAdmin[]
 }
 
 model Hromada {

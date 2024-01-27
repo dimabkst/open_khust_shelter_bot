@@ -9,4 +9,5 @@ export interface IUpsertUserPayload {
 
 export interface IGetUserByTelegramId {
   telegramId: string;
+  raiseError?: boolean;
 }
