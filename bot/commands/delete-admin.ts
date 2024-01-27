@@ -1,12 +1,12 @@
 import { getUserByTelegramId } from '../../core/users';
 import { BotContext } from '../types';
 
-export const addAdminUserSuggestionInfo = {
-  command: 'add_admin',
-  description: 'Додати адміністратора',
+export const deleteAdminUserSuggestionInfo = {
+  command: 'delete_admin',
+  description: 'Видалити адміністратора',
 };
 
-const add_admin = async (ctx: BotContext) => {
+const delete_admin = async (ctx: BotContext) => {
   const user = ctx.from;
 
   const admin = await getUserByTelegramId({ telegramId: user.id.toString() });
@@ -14,8 +14,8 @@ const add_admin = async (ctx: BotContext) => {
   if (!admin.admin?.isSuperAdmin) {
     ctx.reply('У вас не достатньо прав для використання цієї команди');
   } else {
-    ctx.conversation.enter('addAdminConversation');
+    await ctx.conversation.enter('deleteAdminConversation');
   }
 };
 
-export default add_admin;
+export default delete_admin;

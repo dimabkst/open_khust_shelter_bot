@@ -3,16 +3,11 @@ import { HttpError } from '../../utils/error';
 import { ICreateAdminPayload } from './types';
 
 const createAdmin = async (payload: ICreateAdminPayload) => {
-  const { userId, telegramId, hromadaIds, settlementIds } = payload;
-
-  if (!userId && !telegramId) {
-    throw new HttpError(400, 'Provide id or telegram id of new admin user');
-  }
+  const { userId, hromadaIds, settlementIds } = payload;
 
   const user = await prisma.user.findUnique({
     where: {
-      id: userId || undefined,
-      telegramId: telegramId || undefined,
+      id: userId,
     },
     select: {
       id: true,

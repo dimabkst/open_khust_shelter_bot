@@ -1,13 +1,15 @@
 import { Composer } from 'grammy';
 import { createConversation } from '@grammyjs/conversations';
 import { BotContext } from '../types';
-import complaint from './complaint';
-import addAdmin from './add-admin';
+import complaintConversation from './complaint';
+import addAdminConversation from './add-admin';
+import deleteAdminConversation from './delete-admin';
 import handleBotError from '../utils/error';
 
 const conversationsList = {
-  complaint,
-  addAdmin,
+  complaintConversation,
+  addAdminConversation,
+  deleteAdminConversation,
 };
 
 const conversations = new Composer<BotContext>();

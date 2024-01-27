@@ -2,7 +2,7 @@ import { BotContext } from '../types';
 
 export const getTelegramIdUserSuggestionInfo = {
   command: 'get_telegram_id',
-  description: 'Отримати Телеграм ідентифікатор аккаунту',
+  description: 'Отримати Телеграм ідентифікатор акаунту',
 };
 
 const get_telegram_id = async (ctx: BotContext) => {

@@ -30,10 +30,6 @@ const setBotInfo = async (bot: BotInstance) => {
     if (currentBotInfo) {
       Object.keys(botInfo).map(async (key) => {
         if (!(botInfo[key] === currentBotInfo[key] || JSON.stringify(botInfo[key]) === JSON.stringify(currentBotInfo[key]))) {
-          console.log(JSON.stringify(botInfo[key]));
-
-          console.log(JSON.stringify(currentBotInfo[key]));
-
           shouldSetInfo[key] = true;
         }
       });

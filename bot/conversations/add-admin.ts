@@ -6,9 +6,9 @@ import { createAdmin, getUserByTelegramId } from '../../core/users';
 import { ICreateAdminPayload } from '../../core/users/admins/types';
 import { multiplePick } from '../../core/utils/data';
 
-const addAdmin = async (conversation: BotConversation, ctx: BotContext) => {
+const addAdminConversation = async (conversation: BotConversation, ctx: BotContext) => {
   //choosing user
-  let telegramId: string;
+  let userId: string;
 
   let triedAdding = false;
 
@@ -58,13 +58,13 @@ const addAdmin = async (conversation: BotConversation, ctx: BotContext) => {
         await ctx.api.answerCallbackQuery(yesOrNoCallbackQuery.id);
 
         if (confirmedChoice) {
-          telegramId = providedTelegramId;
+          userId = user.id;
         }
       }
     } else {
       ctx.reply('Користувача з таким ідентифікатором не знайдено, перевірте правильність введеного тексту');
     }
-  } while (!telegramId);
+  } while (!userId);
 
   // TODO: add pagination logic from inline keyboard
   // choosing hromada
@@ -85,7 +85,7 @@ const addAdmin = async (conversation: BotConversation, ctx: BotContext) => {
   } while (hromadaId === undefined);
 
   const adminPayload: ICreateAdminPayload = {
-    telegramId,
+    userId,
     hromadaIds: [hromadaId],
   };
 
@@ -96,4 +96,4 @@ const addAdmin = async (conversation: BotConversation, ctx: BotContext) => {
   return;
 };
 
-export default addAdmin;
+export default addAdminConversation;

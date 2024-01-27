@@ -12,7 +12,7 @@ import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
 import { createComplaint } from '../../core/complaints';
 import { ICreateComplaintPayload } from '../../core/complaints/types';
 
-const complaint = async (conversation: BotConversation, ctx: BotContext) => {
+const complaintConversation = async (conversation: BotConversation, ctx: BotContext) => {
   // TODO: add pagination logic from inline keyboard
   // choosing hromada
   const hromadasKeyboard = await conversation.external(() => hromadasInlineKeyboard());
@@ -141,7 +141,7 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
     }
 
     if (!fullName && !phoneNumber) {
-      ctx.reply(`Будь ласка, напишіть Ваше прзівище, ім'я та по батькові`);
+      ctx.reply(`Будь ласка, напишіть Ваше прізвище, ім'я та по батькові`);
 
       const {
         msg: { text: providedFullName },
@@ -181,4 +181,4 @@ const complaint = async (conversation: BotConversation, ctx: BotContext) => {
   return;
 };
 
-export default complaint;
+export default complaintConversation;
