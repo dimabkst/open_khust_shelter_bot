@@ -7,7 +7,7 @@ const settlementsInlineKeyboard = async (hromadaId: number) => {
 
   const buttons = settlements.map((s) => ({ text: s.name, data: `settlementId:${s.id}` }));
 
-  const buttonRows = Object.values(buttons).map((button) => [InlineKeyboard.text(button.text, button.data)]);
+  const buttonRows = buttons.map((button) => [InlineKeyboard.text(button.text, button.data)]);
 
   return InlineKeyboard.from(buttonRows).toFlowed(2);
 };

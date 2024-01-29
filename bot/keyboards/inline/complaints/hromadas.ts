@@ -7,7 +7,7 @@ const hromadasInlineKeyboard = async () => {
 
   const buttons = hromadas.map((h) => ({ text: h.name, data: `hromadaId:${h.id}` }));
 
-  const buttonRows = Object.values(buttons).map((button) => [InlineKeyboard.text(button.text, button.data)]);
+  const buttonRows = buttons.map((button) => [InlineKeyboard.text(button.text, button.data)]);
 
   return InlineKeyboard.from(buttonRows).toFlowed(2);
 };

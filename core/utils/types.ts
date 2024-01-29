@@ -17,8 +17,8 @@ export interface ISavedBotInfo {
 }
 
 export interface IPaginationPayload {
-  limit?: string;
-  page?: string;
+  limit?: number;
+  page?: number;
 }
 
 export interface IPagination {

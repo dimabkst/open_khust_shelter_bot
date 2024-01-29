@@ -8,7 +8,6 @@ import { IDeleteAdminPayload } from '../../core/users/admins/types';
 import { multiplePick } from '../../core/utils/data';
 
 const deleteAdminConversation = async (conversation: BotConversation, ctx: BotContext) => {
-  // TODO: add pagination logic from inline keyboard
   //choosing admin
   let adminId: string;
 
@@ -16,7 +15,7 @@ const deleteAdminConversation = async (conversation: BotConversation, ctx: BotCo
 
   let triedDeleting = false;
 
-  const adminsKeyboard = await conversation.external(() => adminsInlineKeyboard());
+  const adminsKeyboard = await conversation.external(async () => await adminsInlineKeyboard());
 
   do {
     ctx.reply(
@@ -28,11 +27,13 @@ const deleteAdminConversation = async (conversation: BotConversation, ctx: BotCo
 
     triedDeleting = true;
 
-    const { callbackQuery: adminCallbackQuery } = await conversation.waitFor('callback_query');
+    do {
+      const { callbackQuery: adminCallbackQuery } = await conversation.waitFor('callback_query');
 
-    if (adminCallbackQuery.data.split(':')[0] === 'adminId') providedAdminId = adminCallbackQuery.data.split(':')[1];
+      if (adminCallbackQuery.data.split(':')[0] === 'adminId') providedAdminId = adminCallbackQuery.data.split(':')[1];
 
-    await ctx.api.answerCallbackQuery(adminCallbackQuery.id);
+      await ctx.api.answerCallbackQuery(adminCallbackQuery.id);
+    } while (!providedAdminId);
 
     const admin = await conversation.external(() => getAdminById({ adminId: providedAdminId, raiseError: false }));
 
@@ -67,6 +68,8 @@ const deleteAdminConversation = async (conversation: BotConversation, ctx: BotCo
 
       if (confirmedChoice) {
         adminId = admin.id;
+      } else {
+        providedAdminId = null;
       }
     } else {
       ctx.reply('Адміністратора не було знайдено');

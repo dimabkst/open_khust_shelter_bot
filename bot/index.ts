@@ -5,6 +5,7 @@ import { BotContext, BotInstance } from './types';
 import commands from './commands';
 import conversations from './conversations';
 import close_conversation from './commands/close-conversation';
+import { navigationCallbackQueryHandler } from './keyboards/inline/utils';
 import setBotInfo from './utils/info';
 import handleBotError from './utils/error';
 import logger from '../core/utils/logger';
@@ -31,6 +32,12 @@ bot.use(conversationsPlugin());
 
 // set bot info
 (async () => await setBotInfo(bot))();
+
+bot.on('callback_query:data', async (ctx, next) => {
+  await navigationCallbackQueryHandler(ctx);
+
+  await next();
+});
 
 bot.command(close_conversation.name, close_conversation);
 

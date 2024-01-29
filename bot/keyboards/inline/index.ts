@@ -1,4 +1,16 @@
 import { complaintReasonTypesInlineKeyboard, hromadasInlineKeyboard, settlementsInlineKeyboard } from './complaints';
+import { adminsInlineKeyboard } from './admins';
 import yesOrNoInlineKeyboard from './yes-or-no';
 
-export { complaintReasonTypesInlineKeyboard, yesOrNoInlineKeyboard, hromadasInlineKeyboard, settlementsInlineKeyboard };
+const inlineKeyboardsWithPages = {
+  adminsInlineKeyboard,
+};
+
+export {
+  inlineKeyboardsWithPages,
+  complaintReasonTypesInlineKeyboard,
+  yesOrNoInlineKeyboard,
+  hromadasInlineKeyboard,
+  settlementsInlineKeyboard,
+  adminsInlineKeyboard,
+};
