@@ -60,7 +60,7 @@ const appendComplaintInfoToTable = async (payload: IAppendComplaintInfoToTablePa
         complaint.complainant.fullName,
         moment(complaint.createdAt).utc().add(offset, 'minutes').format('DD.MM.YYYY, HH:mm'),
         `${complaint.shelterName}, ${complaint.settlement.name}, ${complaint.settlement.hromada.name} тг`,
-        null, // TODO: add when implemented
+        null, // TODO: add location when implemented
         complaint.complainant.phoneNumber,
         complaint.reasonType === ComplaintReasonType.CLOSED_SHELTER ? '+' : null,
         complaint.reasonType === ComplaintReasonType.NOT_ALLOWED_TO_ENTER ? '+' : null,

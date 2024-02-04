@@ -4,6 +4,7 @@ import yesOrNoInlineKeyboard from './yes-or-no';
 
 const inlineKeyboardsWithPages = {
   adminsInlineKeyboard,
+  hromadasInlineKeyboard,
 };
 
 export {

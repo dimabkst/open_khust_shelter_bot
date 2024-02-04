@@ -66,7 +66,6 @@ const addAdminConversation = async (conversation: BotConversation, ctx: BotConte
     }
   } while (!userId);
 
-  // TODO: add pagination logic from inline keyboard
   // choosing hromada
   const hromadasKeyboard = await conversation.external(() => hromadasInlineKeyboard());
 

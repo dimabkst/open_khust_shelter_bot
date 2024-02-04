@@ -13,7 +13,6 @@ import { appendComplaintInfoToTable, createComplaint } from '../../core/complain
 import { ICreateComplaintPayload } from '../../core/complaints/types';
 
 const complaintConversation = async (conversation: BotConversation, ctx: BotContext) => {
-  // TODO: add pagination logic from inline keyboard
   // choosing hromada
   const hromadasKeyboard = await conversation.external(() => hromadasInlineKeyboard());
 
