@@ -1,4 +1,5 @@
 import prisma from '../db';
+import moment from 'moment-timezone';
 import { IAppendComplaintInfoToTablePayload } from './types';
 import { GoogleSheetsProvider } from '../utils/google-sheets';
 import { IValueRange } from '../utils/types';
@@ -48,6 +49,8 @@ const appendComplaintInfoToTable = async (payload: IAppendComplaintInfoToTablePa
     GoogleSheetsProvider.COMPLAINT_TABLE_SHEET_RANGE
   );
 
+  const offset = moment.tz('Europe/Kiev').utcOffset();
+
   const data: IValueRange = {
     majorDimension: 'ROWS',
     values: [
@@ -55,7 +58,7 @@ const appendComplaintInfoToTable = async (payload: IAppendComplaintInfoToTablePa
         rows?.values?.length ? rows.values.length + 1 : 1,
         complaint.complainant.username,
         complaint.complainant.fullName,
-        complaint.createdAt,
+        moment(complaint.createdAt).utc().add(offset, 'minutes').format('DD.MM.YYYY, HH:mm'),
         `${complaint.shelterName}, ${complaint.settlement.name}, ${complaint.settlement.hromada.name} тг`,
         null, // TODO: add when implemented
         complaint.complainant.phoneNumber,
