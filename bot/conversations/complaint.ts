@@ -9,7 +9,7 @@ import {
 } from '../keyboards';
 import { createComplaintAdminNotification } from '../notifications';
 import { yesOrNoButtons } from '../keyboards/inline/yes-or-no';
-import { createComplaint } from '../../core/complaints';
+import { appendComplaintInfoToTable, createComplaint } from '../../core/complaints';
 import { ICreateComplaintPayload } from '../../core/complaints/types';
 
 const complaintConversation = async (conversation: BotConversation, ctx: BotContext) => {
@@ -177,6 +177,8 @@ const complaintConversation = async (conversation: BotConversation, ctx: BotCont
   });
 
   await conversation.external(() => createComplaintAdminNotification({ complaintId: complaint.id }));
+
+  await conversation.external(() => appendComplaintInfoToTable({ complaintId: complaint.id }));
 
   return;
 };

@@ -16,3 +16,7 @@ export interface ICreateComplaintPayload {
 export interface IGetComplaintByIdPayload {
   id: string;
 }
+
+export interface IAppendComplaintInfoToTablePayload {
+  complaintId: string;
+}

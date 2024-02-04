@@ -25,3 +25,9 @@ export interface IPagination {
   take?: number;
   skip?: number;
 }
+
+export interface IValueRange {
+  majorDimension?: string | null;
+  range?: string | null;
+  values?: any[][] | null;
+}
