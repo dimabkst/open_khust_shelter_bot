@@ -1,8 +1,11 @@
 import fs from 'fs/promises';
+import path from 'path';
 import XLSX, { read } from 'xlsx';
 
+const fileDirectory = path.join(__dirname, '../../assets/static/data/hromadas.xls');
+
 const parseHromadasFile = async () => {
-  const workbookBuffer = await fs.readFile('core/db/hromadas.xls');
+  const workbookBuffer = await fs.readFile(fileDirectory);
 
   const workbook = read(workbookBuffer);
 
