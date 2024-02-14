@@ -35,6 +35,10 @@ const setBotInfo = async (bot: BotInstance) => {
       });
     } else {
       await saveBotInfo(botInfo);
+
+      for (const key of Object.keys(shouldSetInfo).map((key) => key)) {
+        await botInfoUpdateCommands[key](botInfo[key]);
+      }
     }
 
     for (const key of Object.entries(shouldSetInfo)
